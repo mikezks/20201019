@@ -19,7 +19,7 @@ import { SidebarComponent } from "./sidebar/sidebar.component";
   imports: [
     BrowserModule,
     HttpClientModule,
-    FlightBookingModule,
+    // FlightBookingModule,
 
     BrowserAnimationsModule,
     FlightCancellingModule,
