@@ -22,9 +22,9 @@ export const reducer = createReducer(
   initialState,
 
   on(FlightBookingActions.flightsLoaded, (state, action) => {
-    const from = action.flights[0].from;
-    const to = action.flights[0].to;
-    const oldFlights = state.flights.filter(f => !(f.from === from && f.to === to));
+    const from = action.flights[0]?.from;
+    const to = action.flights[0]?.to;
+    const oldFlights = (from && to && state.flights.filter(f => !(f.from === from && f.to === to))) || state.flights;
     const flights = action.flights;
     return { ...state, flights: [ ...oldFlights, ...flights ] };
   }),
