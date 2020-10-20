@@ -11,7 +11,7 @@ export interface State {
 
 export const initialState: State = {
   flights: [],
-  filter: { from: '', to: '' }
+  filter: { from: 'Hamburg', to: 'Graz' }
 };
 
 export interface FlightBookingAppState {
@@ -31,6 +31,10 @@ export const reducer = createReducer(
   on(FlightBookingActions.flightUpdate, (state, action) => {
     const flights = state.flights.map(f => f.id === action.flight.id ? action.flight : f);
     return { ...state, flights };
+  }),
+  on(FlightBookingActions.filterUpdate, (state, action) => {
+    const filter = { from: action.from, to: action.to };
+    return { ...state, filter };
   })
 );
 

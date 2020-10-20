@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Flight } from '@flight-workspace/flight-lib';
 import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
@@ -12,8 +13,7 @@ import * as fromFlightBooking from '../+state';
 })
 export class FlightSearchComponent implements OnInit {
 
-  from = 'Hamburg'; // in Germany
-  to = 'Graz'; // in Austria
+  searchForm: FormGroup;
   urgent = false;
   flights$: Observable<Flight[]>;
 
@@ -23,18 +23,31 @@ export class FlightSearchComponent implements OnInit {
     "5": true
   };
 
-  constructor(private store: Store<fromFlightBooking.FlightBookingAppState>) {
+  constructor(
+    private store: Store<fromFlightBooking.FlightBookingAppState>,
+    private fb: FormBuilder) {
   }
 
   ngOnInit() {
-    this.flights$ = this.store.pipe(select(fromFlightBooking.selectFlights));
+    this.searchForm = this.fb.group({
+      from: ['', [Validators.required]],
+      to: ['', [Validators.required]],
+      urgent: []
+    });
+
+    this.store.pipe(select(fromFlightBooking.selectFilter))
+      .subscribe(
+        filter => this.searchForm.patchValue(filter)
+      );
+    this.flights$ = this.store.pipe(select(fromFlightBooking.selectFilteredFlights));
   }
 
   search(): void {
-    if (!this.from || !this.to) return;
-
     this.store.dispatch(
-      fromFlightBooking.flightsLoad({ from: this.from, to: this.to })
+      fromFlightBooking.flightSearch({
+        from: this.searchForm.controls.from.value,
+        to: this.searchForm.controls.to.value
+      })
     );
   }
 
