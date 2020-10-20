@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Flight, FlightService} from '@flight-workspace/flight-lib';
 import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import { take } from 'rxjs/operators';
 import * as fromFlightBooking from '../+state';
 
 @Component({
@@ -28,7 +29,7 @@ export class FlightSearchComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.flights$ = this.store.pipe(select(state => state.flightBooking.flights));
+    this.flights$ = this.store.pipe(select(fromFlightBooking.selectFlights));
   }
 
   search(): void {
@@ -46,7 +47,18 @@ export class FlightSearchComponent implements OnInit {
   }
 
   delay(): void {
-    this.flightService.delay();
-  }
+    // this.flightService.delay();
 
+    this.flights$.pipe(take(1))
+      .subscribe(flights => {
+        const oldFlight = flights[0];
+        const oldDate = new Date(oldFlight.date);
+        const date = new Date(oldDate.getTime() + 15 * 60 * 1_000).toISOString();
+        const flight = { ...oldFlight, date };
+
+        this.store.dispatch(
+          fromFlightBooking.flightUpdate({ flight })
+        );
+      });
+  }
 }
