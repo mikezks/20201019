@@ -16,6 +16,75 @@
   <div class="content">
     <p>Id: {{id}}</p>
     <p>ShowDetails: {{showDetails}}</p>
+
+    <form [formGroup]="editForm">
+      <div
+        class="alert alert-danger"
+        *ngIf="editForm.hasError('roundtrip')">
+        ...roundtrip...
+      </div>
+
+      <div class="form-group">
+          <label>Id:</label>
+          <input formControlName="id" class="form-control">
+      </div>
+
+
+      <div class="form-group">
+        <label>From:</label>
+        <input formControlName="from" class="form-control">
+      </div>
+
+      <div
+        class="alert alert-danger"
+        *ngIf="editForm.controls['from'].invalid">
+        ...error...
+      </div>
+
+      <div
+        class="alert alert-danger"
+        *ngIf="editForm.controls['from'].hasError('minlength')">
+        ...minlength...
+      </div>
+
+      <div
+        class="alert alert-danger"
+        *ngIf="editForm.controls['from'].hasError('city')">
+        ...city...
+      </div>
+
+      <div class="form-group">
+        <label>To:</label>
+        <input formControlName="to" class="form-control">
+      </div>
+
+      <div
+        class="alert alert-danger"
+        *ngIf="editForm.controls['to'].invalid">
+        ...error...
+      </div>
+
+      <div
+        class="alert alert-danger"
+        *ngIf="editForm.controls['to'].hasError('minlength')">
+        ...minlength...
+      </div>
+
+      <div
+        class="alert alert-danger"
+        *ngIf="editForm.controls['to'].hasError('city')">
+        ...city...
+      </div>
+
+      <div class="form-group">
+          <label>Date:</label>
+          <input formControlName="date" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <button mat-button (click)="save()" class="btn btn-default">Save</button>
+      </div>
+
+    </form>
   </div>
 </div>
-
