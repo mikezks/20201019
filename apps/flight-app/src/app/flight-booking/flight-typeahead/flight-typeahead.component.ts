@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { merge, Observable, Subscription, timer } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, share, switchMap, tap } from 'rxjs/operators';
+import { ConnectableObservable, merge, Observable, of, Subscription, timer } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, publish, publishReplay, share, switchMap, tap } from 'rxjs/operators';
 import { Flight } from '@flight-workspace/flight-lib';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 
@@ -12,6 +12,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 })
 export class FlightTypeaheadComponent implements OnInit, OnDestroy {
   timer$: Observable<number>;
+  timerPublish$: ConnectableObservable<number>;
   subscription: Subscription;
   fromControl = new FormControl();
   flights$: Observable<Flight[]>;
@@ -22,6 +23,7 @@ export class FlightTypeaheadComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
 
     // this.rxjsDemo();
+    // this.publishDemo();
 
     this.flights$ =
       this.fromControl.valueChanges.pipe(
@@ -54,6 +56,25 @@ export class FlightTypeaheadComponent implements OnInit, OnDestroy {
 
     /* this.subscription = this.timer$
       .subscribe(console.log) */
+  }
+
+  publishDemo(): void {
+    this.timerPublish$ = of(1, 2, 3).pipe(
+      publish()
+    ) as ConnectableObservable<number>;
+
+    /* setTimeout(() => {
+      console.log('Connect');
+      this.timerPublish$.connect();
+    }, 3000); */
+
+    console.log('Subscription');
+    this.timerPublish$.pipe(
+      tap(_ => console.log('Callback'))
+    ).subscribe(console.log);
+
+    console.log('Connect');
+    this.timerPublish$.connect();
   }
 
   ngOnDestroy(): void {
